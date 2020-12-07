@@ -177,7 +177,7 @@ void eFilePushThread::thread()
 						}
 #else
 						continue;
-#endif										;
+#endif
 					case 1:
 						eDebug("[eFilePushThread] wait for driver eof ok");
 						break;
