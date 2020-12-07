@@ -1,7 +1,8 @@
 # the implementation here is a bit crappy.
-from boxbranding import getBoxType, getMachineBuild
 import time
 from Directories import resolveFilename, SCOPE_CONFIG
+
+from enigma import evfd  # Used for fulan vfd
 
 PERCENTAGE_START = 0
 PERCENTAGE_END = 100
@@ -13,9 +14,7 @@ total_time = 1
 profile_file = None
 
 try:
-	f = open(resolveFilename(SCOPE_CONFIG, "profile"), "r")
-	profile_old = f.readlines()
-	f.close()
+	profile_old = open(resolveFilename(SCOPE_CONFIG, "profile"), "r").readlines()
 
 	t = None
 	for line in profile_old:
@@ -24,35 +23,15 @@ try:
 		total_time = t
 		profile_data[id] = t
 except:
-	print "[Profile] no profile data available"
+	print "no profile data available"
 
 try:
 	profile_file = open(resolveFilename(SCOPE_CONFIG, "profile"), "w")
 except IOError:
-	print "[Profile] WARNING: couldn't open profile file!"
+	print "WARNING: couldn't open profile file!"
 
 def profile(id):
 	now = time.time() - profile_start
-
-	# GML: Set the device and format here...probably more could be added?
-	#
-	box_type = getBoxType()
-	if box_type in ("odinm7", "odinm6", "xp1000s"):
-		dev_fmt = ("/dev/dbox/oled0", "%d")
-	elif box_type in ("gb800se", "gb800solo"):
-		dev_fmt = ("/dev/dbox/oled0", "%d  \n")
-	elif box_type == "mbtwin":
-		dev_fmt = ("/dev/dbox/oled0", "%d%%")
-	elif box_type == "gb800seplus":
-		dev_fmt = ("/dev/mcu", "%d  \n")
-	elif box_type == "ebox5000":
-		dev_fmt = ("/proc/progress", "%d"),
-	elif getMachineBuild() in ("inihdp", "inihdx"):
-		dev_fmt = ("/proc/vfd", "Loading %d%%\n")
-	else:
-		dev_fmt = ("/proc/progress", "%d \n")
-	(dev, fmt) = dev_fmt
-
 	if profile_file:
 		profile_file.write("%7.3f\t%s\n" % (now, id))
 
@@ -63,9 +42,8 @@ def profile(id):
 			else:
 				perc = PERCENTAGE_START
 			try:
-				f = open(dev, "w")
-				f.write(fmt % perc)
-				f.close()
+				open("/proc/progress", "w").write("%d \n" % perc)
+				evfd.getInstance().vfd_write_string("-%02d-" % perc)  # Used for fulan vfd
 			except IOError:
 				pass
 

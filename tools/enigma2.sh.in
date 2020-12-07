@@ -4,6 +4,9 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 datarootdir=@datarootdir@
 
+# write -VIX- on vfd display
+echo "VIX" > /dev/vfd
+
 # perform a NTP update sync, before starting Enigma2, as it is broke in OE.
 #if [ -x /usr/sbin/ntpdate ]; then
 #	/usr/sbin/ntpdate -s -u pool.ntp.org && sleep 2

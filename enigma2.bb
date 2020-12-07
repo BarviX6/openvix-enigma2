@@ -42,6 +42,7 @@ EXTRA_OECONF = "\
     --enable-dependency-tracking \
     ${@bb.utils.contains("MACHINE_FEATURES", "textlcd", "--with-textlcd" , "", d)} \
     ${@bb.utils.contains("MACHINE_FEATURES", "colorlcd", "--with-colorlcd" , "", d)} \
+    ${@bb.utils.contains("TARGET_ARCH", "sh4", "--enable-sh=yes " , "", d)} \
     BUILD_SYS=${BUILD_SYS} \
     HOST_SYS=${HOST_SYS} \
     STAGING_INCDIR=${STAGING_INCDIR} \

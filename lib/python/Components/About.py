@@ -1,4 +1,4 @@
-from boxbranding import getImageVersion, getMachineBuild, getBoxType
+from boxbranding import getImageVersion, getMachineBuild, getBoxType, getBrandOEM
 from sys import modules
 import socket, fcntl, struct
 
@@ -25,6 +25,14 @@ def getGStreamerVersionString():
 	except:
 		return _("unknown")
 
+def getFFmpegVersionString():
+	try:
+		from glob import glob
+		ffmpeg = [x.split("Version: ") for x in open(glob("/var/lib/opkg/info/ffmpeg.control")[0], "r") if x.startswith("Version:")][0]
+		return "%s" % ffmpeg[1].split("+")[0].replace("\n","")
+	except:
+		return _("unknown")
+		
 def getKernelVersionString():
 	try:
 		f = open("/proc/version","r")
@@ -60,7 +68,7 @@ def getChipSetString():
 		f = open('/proc/stb/info/chipset', 'r')
 		chipset = f.read()
 		f.close()
-		return str(chipset.lower().replace('\n','').replace('brcm','').replace('bcm',''))
+		return str(chipset.lower().replace('\n','').replace('brcm','').replace('bcm','').replace('sti',''))
 	except IOError:
 		return _("unavailable")
 
@@ -110,6 +118,8 @@ def getCPUSpeedString():
 	return _("unavailable")
 
 def getCPUArch():
+	if getBrandOEM() in ('fulan'):
+		return "SH4"
 	if getBoxType() in ('osmio4k',):
 		return "ARM V7"
 	if "ARM" in getCPUString():

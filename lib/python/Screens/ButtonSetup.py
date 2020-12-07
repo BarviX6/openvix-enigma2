@@ -77,6 +77,22 @@ ButtonSetupKeys = [	(_("Red"), "red", "Infobar/openSingleServiceEPG/1"),
 	(_("HDMIin"), "HDMIin", "Infobar/HDMIIn"),
 	(_("HDMIin") + " " + _("long"), "HDMIin_long", (SystemInfo["LcdLiveTV"] and "Infobar/ToggleLCDLiveTV") or ""),
 	(_("Context"), "contextMenu", "Infobar/showExtensionSelection"),
+	(_("TV/Sat"), "tvsat", ""),
+	(_("TV/Sat long"), "tvsat_long", ""),
+	(_("Vformat"), "vmode", ""),
+	(_("Vformat long"), "vmode_long", ""),
+	(_("Find"), "find", ""),
+	(_("Find long"), "find_long", ""),
+	(_("Recall"), "recall", ""),
+	(_("Recall long"), "recall_long", ""),
+	(_("Portal"), "portal", ""),
+	(_("Portal long"), "portal_long", ""),
+	(_("Playmode"), "playmode", ""),
+	(_("Playmode long"), "playmode_long", ""),
+	(_("USB"), "usb", ""),
+	(_("USB long"), "usb_long", ""),
+	(_("Fast"), "fast", ""),
+	(_("Fast long"), "fast_long", ""),
 	(_("F1/LAN"), "f1", "Infobar/showNetworkMounts"),
 	(_("F1/LAN long"), "f1_long", ""),
 	(_("F2"), "f2", ""),
@@ -119,6 +135,8 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Show extension selection"), "Infobar/showExtensionSelection", "InfoBar"))
 	ButtonSetupFunctions.append((_("Zap down"), "Infobar/zapDown", "InfoBar"))
 	ButtonSetupFunctions.append((_("Zap up"), "Infobar/zapUp", "InfoBar"))
+	ButtonSetupFunctions.append((_("Volume down"), "Infobar/volumeDown", "InfoBar"))
+	ButtonSetupFunctions.append((_("Volume up"), "Infobar/volumeUp", "InfoBar"))	
 	ButtonSetupFunctions.append((_("Show service list"), "Infobar/openServiceList", "InfoBar"))
 	ButtonSetupFunctions.append((_("Show service list or movies"), "Infobar/showServiceListOrMovies", "InfoBar"))
 	ButtonSetupFunctions.append((_("Show movies"), "Infobar/showMovies", "InfoBar"))
@@ -135,6 +153,7 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Toggle default subtitles"), "Infobar/toggleDefaultSubtitles", "InfoBar"))
 	ButtonSetupFunctions.append((_("Switch to radio mode"), "Infobar/showRadio", "InfoBar"))
 	ButtonSetupFunctions.append((_("Switch to TV mode"), "Infobar/showTv", "InfoBar"))
+	ButtonSetupFunctions.append((_("Toggle between TV and Radio mode"), "Infobar/toogleTvRadio", "InfoBar"))	
 	ButtonSetupFunctions.append((_("Instant record"), "Infobar/instantRecord", "InfoBar"))
 	ButtonSetupFunctions.append((_("Start instant recording"), "Infobar/startInstantRecording", "InfoBar"))
 	ButtonSetupFunctions.append((_("Activate timeshift end"), "Infobar/activateTimeshiftEnd", "InfoBar"))
