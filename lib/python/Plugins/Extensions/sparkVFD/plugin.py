@@ -380,5 +380,6 @@ def Plugins(**kwargs):
 			name = _("sparkVFD"),
 			description = _("LED display configuration for Spark"),
 			where = PluginDescriptor.WHERE_PLUGINMENU,
+			icon = _("leddisplay.png"),			
 			fnc = opencfg))
 	return l
