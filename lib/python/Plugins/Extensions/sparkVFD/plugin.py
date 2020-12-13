@@ -226,7 +226,7 @@ class VFDIcons:
 						servicename = "PLAY"
 						currPlay = self.session.nav.getCurrentService()
 						if currPlay != None and self.mp3Available: # show the MP3 tag
-							servicename = currPlay.info().getInfoString(iServiceInformation.sTagTitle) + " - " + currPlay.info().getInfoString(iServiceInformation.sTagArtist)
+							servicename = currPlay.info().getInfoString(iServiceInformation.sTagTitle) + "MP3" + currPlay.info().getInfoString(iServiceInformation.sTagArtist)
 						else: # show the file name
 							self.service = self.session.nav.getCurrentlyPlayingServiceReference()
 							if not self.service is None:
