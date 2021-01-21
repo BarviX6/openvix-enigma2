@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
 
 from Components.config import config
 from Components.NimManager import nimmanager
@@ -80,7 +81,7 @@ class LamedbReader():
 
 		try:
 			lamedb = open(path + "/lamedb", "r")
-		except Exception, e:
+		except Exception as e:
 			return transponders
 
 		content = lamedb.read()
@@ -197,7 +198,7 @@ class LamedbReader():
 
 		srv_blocks = content[srv_start + 9:srv_stop].strip().split("\n")
 
-		for i in range(0, len(srv_blocks)/3):
+		for i in list(range(0, len(srv_blocks)//3)):
 			service_reference = srv_blocks[i*3].strip()
 			service_name = srv_blocks[(i*3)+1].strip()
 			service_provider = srv_blocks[(i*3)+2].strip()
@@ -618,11 +619,15 @@ class LamedbWriter():
 					service["flags"],
 					":%x" % service["ATSC_source_id"] if "ATSC_source_id" in service else ":0"))
 
-				control_chars = ''.join(map(unichr, range(0,32) + range(127,160)))
+				control_chars = ''.join(list(map(six.unichr, list(range(0,32)) + list(range(127,160)))))
 				control_char_re = re.compile('[%s]' % re.escape(control_chars))
-				if 'provider_name' in service.keys():
-					service_name = control_char_re.sub('', service["service_name"]).decode('latin-1').encode("utf8")
-					provider_name = control_char_re.sub('', service["provider_name"]).decode('latin-1').encode("utf8")
+				if 'provider_name' in list(service.keys()):
+					if six.PY2:
+						service_name = control_char_re.sub('', service["service_name"]).decode('latin-1').encode("utf8")
+						provider_name = control_char_re.sub('', service["provider_name"]).decode('latin-1').encode("utf8")
+					else:
+						service_name =  control_char_re.sub('', six.ensure_text(six.ensure_str(service["service_name"],  encoding='latin-1'), encoding='utf-8', errors='ignore'))
+						provider_name = control_char_re.sub('', six.ensure_text(six.ensure_str(service["provider_name"], encoding='latin-1'), encoding='utf-8', errors='ignore'))
 				else:
 					service_name = service["service_name"]
 
@@ -720,11 +725,15 @@ class Opentv_Zapper():
 		from Screens.Standby import inStandby
 
 		# this is here so tuner setup is fresh for every download
-		self.num_tuners = len(getNimListForSat(self.transponder["orbital_position"]))
-		if self.session and self.num_tuners and not self.downloading and not self.session.nav.RecordTimer.isRecording():
+		tuners = getNimListForSat(self.transponder["orbital_position"])
+		num_tuners = len(tuners)
+		if self.session and num_tuners and not self.downloading and not self.session.nav.RecordTimer.isRecording():
 			self.adapter = None
 			self.downloading = False
-			if not inStandby and self.num_tuners > 1:
+			currentlyPlayingNIM = self.getCurrentlyPlayingNIM()
+			print("[%s]currentlyPlayingNIM" % (debug_name), currentlyPlayingNIM)
+			print("[%s]available tuners" % (debug_name), tuners)
+			if not inStandby and (num_tuners > 1 or tuners[0] != currentlyPlayingNIM):
 				self.adapter = RecordAdapter(self.session)
 				self.downloading = self.adapter.play(self.sref)
 			if not self.downloading and (inStandby or self.force):
@@ -752,6 +761,15 @@ class Opentv_Zapper():
 		print("[%s]download completed... Next download scheduled for %s" % (debug_name, next_download))
 		if not inStandby and config.plugins.opentvzapper.notifications.value:
 			Notifications.AddPopup(text=_("OpenTV EPG download completed.\nNext download: %s") % next_download, type=MessageBox.TYPE_INFO, timeout=5, id=debug_name)
+
+	def getCurrentlyPlayingNIM(self):
+		currentlyPlayingNIM = None
+		currentService = self.session and self.session.nav.getCurrentService()
+		frontendInfo = currentService and currentService.frontendInfo()
+		frontendData = frontendInfo and frontendInfo.getAll(True)
+		if frontendData is not None:
+			currentlyPlayingNIM = frontendData.get("tuner_number", None)
+		return currentlyPlayingNIM
 		
 		
 opentv_zapper = Opentv_Zapper()
