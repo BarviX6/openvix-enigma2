@@ -42,7 +42,7 @@ from Screens.SubtitleDisplay import SubtitleDisplay
 from Screens.RdsDisplay import RdsInfoDisplay, RassInteractive
 from Screens.TimeDateInput import TimeDateInput
 from Screens.TimerEdit import TimerEditList
-from Screens.TimerEntry import TimerEntry as addTimerFromEvent
+from Screens.TimerEntry import TimerEntry, addTimerFromEvent
 from Screens.UnhandledKey import UnhandledKey
 from ServiceReference import ServiceReference, isPlayableForCur
 
@@ -329,6 +329,8 @@ class SecondInfoBar(Screen, HelpableScreen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		if config.usage.second_infobar_simple.value:
+			self.skinName = ["SecondInfoBarSimple", "SecondInfoBar"]
 		HelpableScreen.__init__(self)
 		self["epg_description"] = ScrollLabel()
 		self["channel"] = Label()
