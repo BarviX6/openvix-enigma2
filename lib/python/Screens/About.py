@@ -22,6 +22,7 @@ from Tools.Multiboot import GetCurrentImage, GetCurrentImageMode
 from Tools.StbHardware import getFPVersion
 import skin
 
+
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -76,18 +77,18 @@ class About(Screen):
 			AboutText += _("%s") % part
 
 		if SystemInfo["canMultiBoot"]:
-			slot = image= GetCurrentImage()
-			part = "eMMC slot %s" %slot
+			slot = image = GetCurrentImage()
+			part = "eMMC slot %s" % slot
 			bootmode = ""
 			if SystemInfo["canMode12"]:
-				bootmode = "bootmode = %s" %GetCurrentImageMode()
-			print "[About] HasHiSi = %s, slot = %s" %(SystemInfo["HasHiSi"], slot)
+				bootmode = "bootmode = %s" % GetCurrentImageMode()
+			print "[About] HasHiSi = %s, slot = %s" % (SystemInfo["HasHiSi"], slot)
 			if SystemInfo["HasHiSi"] and "sda" in SystemInfo["canMultiBoot"][slot]['root']:
 				if slot > 4:
-					image -=4
+					image -= 4
 				else:
-					image -=1
-				part = "SDcard slot %s (%s) " %(image, SystemInfo["canMultiBoot"][slot]['root'])
+					image -= 1
+				part = "SDcard slot %s (%s) " % (image, SystemInfo["canMultiBoot"][slot]['root'])
 			AboutText += _("Image Slot:\t%s") % "STARTUP_" + str(slot) + "  " + part + " " + bootmode + "\n"
 
 		if getMachineName() in ('ET8500') and path.exists('/proc/mtd'):
@@ -106,7 +107,7 @@ class About(Screen):
 		AboutText += _("Drivers:\t%s\n") % driversdate
 		AboutText += _("Kernel:\t%s\n") % about.getKernelVersionString()
 		AboutText += _("GStreamer:\t%s\n") % about.getGStreamerVersionString().replace("GStreamer ","")
-		AboutText += _("FFmpeg:\t%s\n") % about.getFFmpegVersionString().replace("FFmpeg ","")		
+		AboutText += _("FFmpeg:\t%s\n") % about.getFFmpegVersionString().replace("FFmpeg ","")
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		AboutText += _("Installed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Last update:\t%s\n") % getEnigmaVersionString()
@@ -131,7 +132,7 @@ class About(Screen):
 				tempinfo = f.read()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("System temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("System temp:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
 
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
@@ -151,7 +152,7 @@ class About(Screen):
 				tempinfo = ""
 		if tempinfo and int(tempinfo) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("Processor temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("Processor temp:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		fp_version = getFPVersion()
@@ -196,6 +197,7 @@ class About(Screen):
 
 	def createSummary(self):
 		return AboutSummary
+
 
 class Devices(Screen):
 	def __init__(self, session):
@@ -244,7 +246,7 @@ class Devices(Screen):
 		self["nims"].setText(niminfo)
 
 		nims = nimmanager.nimList()
-		if len(nims) <= 4 :
+		if len(nims) <= 4:
 			for count in (0, 1, 2, 3):
 				if count < len(nims):
 					self["Tuner" + str(count)].setText(nims[count])
@@ -261,7 +263,7 @@ class Devices(Screen):
 				if desc_list and desc_list[cur_idx]['desc'] == desc:
 					desc_list[cur_idx]['end'] = idx
 				else:
-					desc_list.append({'desc' : desc, 'start' : idx, 'end' : idx})
+					desc_list.append({'desc': desc, 'start': idx, 'end': idx})
 					cur_idx += 1
 				count += 1
 
@@ -296,7 +298,7 @@ class Devices(Screen):
 					continue
 				else:
 					freeline = _("Free: ") + _("full")
-				line = "%s      %s" %(hddp, freeline)
+				line = "%s      %s" % (hddp, freeline)
 				self.list.append(line)
 		self.list = '\n'.join(self.list)
 		self["hdd"].setText(self.list)
