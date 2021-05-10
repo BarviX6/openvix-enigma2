@@ -513,6 +513,8 @@ class AttributeParser:
 		self.guiObject.setItemHeight(parseScale(value))
 
 	def pixmap(self, value):
+		if value.endswith(".svg"): # if grafic is svg force alphatest to "blend"
+			self.guiObject.setAlphatest(2)
 		self.guiObject.setPixmap(loadPixmap(value, self.desktop, self.guiObject.size().width(), self.guiObject.size().height()))
 
 	def backgroundPixmap(self, value):
@@ -1260,6 +1262,8 @@ def readSkin(screen, skin, names, desktop):
 				p(w, context)
 			except SkinError as err:
 				print("[Skin] Error in screen '%s' widget '%s' %s!" % (name, w.tag, str(err)))
+				import traceback
+				traceback.print_exc()
 
 	def processPanel(widget, context):
 		n = widget.attrib.get("name")

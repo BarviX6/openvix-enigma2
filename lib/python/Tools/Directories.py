@@ -536,3 +536,15 @@ def mediafilesInUse(session):
 
 def shellquote(s):
 	return "'%s'" % s.replace("'", "'\\''")
+
+
+def isPluginInstalled(pluginname, pluginfile="plugin", pluginType=None):
+	path = resolveFilename(SCOPE_PLUGINS)
+	pluginfolders = [name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
+	if pluginType is None or pluginType in pluginfolders:
+		plugintypes = pluginType and [pluginType] or pluginfolders
+		for fileext in [".pyo", ".py", ".pyc"]:
+			for plugintype in plugintypes:
+				if os.path.isfile(os.path.join(path, plugintype, pluginname, pluginfile + fileext)):
+					return True
+	return False
