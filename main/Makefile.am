@@ -44,7 +44,8 @@ enigma2_LDADD = \
 	@LIBDDVD_LIBS@ \
 	@AVAHI_LIBS@ \
 	@LIBHIACCEL_LIBS@ \
-	-ltuxtxt -ltuxtxt32bpp -lcrypt -lrt -ldl
+	-ltuxtxt -ltuxtxt32bpp -lcrypt -lrt -ldl \
+	-lpthread -lresolv -lmmeimage
 
 enigma2_LDFLAGS = -Wl,--export-dynamic
 
