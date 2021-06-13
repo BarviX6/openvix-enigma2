@@ -48,8 +48,8 @@ gFBDC::gFBDC()
 		|| (xres == 1920 && yres == 1080)))
 	{
 		/* fallback to a decent default */
-		xres = 720;
-		yres = 576;
+		xres = 1280; //j00zek let us make HD our default for OpenPLi
+		yres = 720;
 	}
 
 	surface.clut.data = 0;
@@ -251,28 +251,30 @@ void gFBDC::setGamma(int g)
 
 void gFBDC::setResolution(int xres, int yres, int bpp)
 {
-#if defined(__sh__)
-	/* if xres and yres are negative call SetMode with the lates xres and yres
-	 * we need that to read the new screen dimesnions after a resolution change
-	 * without changing the frambuffer dimensions
+	/* if xres and yres are negative call SetMode with the latest xres and yres
+	 * we need that to read the new screen dimensions after a resolution change
+	 * without changing the framebuffer dimensions
 	 */
-	if (xres<0 && yres<0 ) {
-		fb->SetMode(surface.x, surface.y, bpp);
+	int m_xres;
+	int m_yres;
+	int m_bpp;
+	fb->getMode(m_xres, m_yres, m_bpp);
+
+	if (xres < 0 && yres < 0)
+	{
+		fb->SetMode(m_xres, m_yres, bpp);
 		return;
 	}
-#endif
-	if (m_pixmap && (surface.x == xres) && (surface.y == yres) && (surface.bpp == bpp))
-		return;
 
 	if (gAccel::getInstance())
 		gAccel::getInstance()->releaseAccelMemorySpace();
 
 	fb->SetMode(xres, yres, bpp);
 
-#if defined(__sh__)
-	for (int y = 0; y<yres; y++) // make whole screen transparent
+	for (int y = 0; y < yres; y++)
+	{ // make whole screen transparen
 		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
-#endif
+	}
 	surface.x = xres;
 	surface.y = yres;
 	surface.bpp = bpp;
@@ -280,9 +282,6 @@ void gFBDC::setResolution(int xres, int yres, int bpp)
 	surface.stride = fb->Stride();
 	surface.data = fb->lfb;
 	
-	for (int y=0; y<yres; y++)    // make whole screen transparent 
-		memset(fb->lfb+ y * xres * 4, 0x00, xres * 4);	
-
 	surface.data_phys = fb->getPhysAddr();
 
 	int fb_size = surface.stride * surface.y;
@@ -313,7 +312,7 @@ void gFBDC::setResolution(int xres, int yres, int bpp)
 	{
 		surface.clut.colors = 256;
 		surface.clut.data = new gRGB[surface.clut.colors];
-		memset(surface.clut.data, 0, sizeof(*surface.clut.data)*surface.clut.colors);
+		memset(static_cast<void*>(surface.clut.data), 0, sizeof(*surface.clut.data)*surface.clut.colors);
 	}
 
 	surface_back.clut = surface.clut;
