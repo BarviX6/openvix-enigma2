@@ -14,7 +14,6 @@
 class eDVBCISession;
 class eDVBCIApplicationManagerSession;
 class eDVBCICAManagerSession;
-class eDVBCICcSession;
 class eDVBCIMMISession;
 class eDVBServicePMTHandler;
 class eDVBCISlot;
@@ -49,11 +48,9 @@ class eDVBCISlot: public iObject, public sigc::trackable
 	int fd;
 	ePtr<eSocketNotifier> notifier;
 	int state;
-	int m_ci_version;
 	std::map<uint16_t, uint8_t> running_services;
 	eDVBCIApplicationManagerSession *application_manager;
 	eDVBCICAManagerSession *ca_manager;
-	eDVBCICcSession *cc_manager;
 	eDVBCIMMISession *mmi_session;
 	std::priority_queue<queueData> sendqueue;
 	caidSet possible_caids;
@@ -70,7 +67,6 @@ class eDVBCISlot: public iObject, public sigc::trackable
 	eDVBCIApplicationManagerSession *getAppManager() { return application_manager; }
 	eDVBCIMMISession *getMMIManager() { return mmi_session; }
 	eDVBCICAManagerSession *getCAManager() { return ca_manager; }
-	eDVBCICcSession *getCCManager() { return cc_manager; }
 
 	int getState() { return state; }
 	int reset();
@@ -84,11 +80,9 @@ class eDVBCISlot: public iObject, public sigc::trackable
 	void removeService(uint16_t program_number=0xFFFF);
 	int setSource(const std::string &source);
 	int setClockRate(int);
-	void determineCIVersion();
 	static std::string getTunerLetter(int tuner_no) { return std::string(1, char(65 + tuner_no)); }
 public:
 	enum {stateRemoved, stateInserted, stateInvalid, stateResetted};
-	enum {versionUnknown = -1, versionCI = 0, versionCIPlus1 = 1, versionCIPlus2 = 2};
 	eDVBCISlot(eMainloop *context, int nr);
 	~eDVBCISlot();
 
@@ -97,11 +91,9 @@ public:
 	void setAppManager( eDVBCIApplicationManagerSession *session );
 	void setMMIManager( eDVBCIMMISession *session );
 	void setCAManager( eDVBCICAManagerSession *session );
-	void setCCManager( eDVBCICcSession *session );
 
 	int getSlotID();
 	int getNumOfServices();
-	int getVersion();
 };
 
 struct CIPmtHandler
@@ -151,7 +143,6 @@ private:
 	eSmartPtrList<eDVBCISlot> m_slots;
 	eDVBCISlot *getSlot(int slotid);
 	PMTHandlerList m_pmt_handlers;
-	std::string m_language;
 	eFixedMessagePump<int> m_messagepump_thread; // message handling in the thread
 	eFixedMessagePump<int> m_messagepump_main; // message handling in the e2 mainloop
 	ePtr<eTimer> m_runTimer; // workaround to interrupt thread mainloop as some ci drivers don't implement poll properly
@@ -190,7 +181,6 @@ public:
 	int setInputSource(int tunerno, const std::string &source);
 	int setCIClockRate(int slot, int rate);
 	bool canDescrambleMultipleServices(eDVBCISlot* slot);
-	std::string getLanguage() { return m_language; };
 #ifdef SWIG
 public:
 #endif
