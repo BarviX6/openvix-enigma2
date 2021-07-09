@@ -73,10 +73,11 @@ eDVBCICcSession::~eDVBCICcSession()
 
 int eDVBCICcSession::receivedAPDU(const unsigned char *tag, const void *data, int len)
 {
-	eTraceNoNewLineStart("[CI CC] SESSION(%d)/CC %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
+	eDebug("[CI CC] SESSION(%d)/CC %02x %02x %02x", session_nb, tag[0],tag[1], tag[2]);
+	/*eDebugNoNewLineStart("SESSION(%d)/CC %02x %02x %02x: ", session_nb, tag[0],tag[1], tag[2]);
 	for (int i=0; i<len; i++)
-		eTraceNoNewLine("%02x ", ((const unsigned char*)data)[i]);
-	eTraceNoNewLine("\n");
+		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
+	eDebugNoNewLine("\n");*/
 
 	if ((tag[0] == 0x9f) && (tag[1] == 0x90))
 	{
@@ -101,7 +102,7 @@ int eDVBCICcSession::doAction()
 	case stateStarted:
 		break;
 	default:
-		eWarning("[CI CC] unknown state");
+		eDebug("[CI CC] unknown state");
 		break;
 	}
 	return 0;
@@ -210,8 +211,8 @@ void eDVBCICcSession::cc_sac_data_req(const uint8_t *data, unsigned int len)
 	if (len < 10)
 		return;
 
-	eTraceNoNewLineStart("[CI RCC] cc_sac_data_req: ");
-	traceHexdump(data, len);
+	//eDebugNoNewLineStart("[CI RCC] cc_sac_data_req: ");
+	//hexdump(data, len);
 
 	memcpy(tmp, data, 8);
 	sac_crypt(&tmp[8], &data[8], len - 8, AES_DECRYPT);
@@ -276,11 +277,11 @@ void eDVBCICcSession::cc_sac_sync_req(const uint8_t *data, unsigned int len)
 	unsigned int serial;
 	int pos = 0;
 
-	eTraceNoNewLineStart("[CI RCC] cc_sac_sync_req: ");
-	traceHexdump(data, len);
+	//eDebugNoNewLineStart("[CI RCC] cc_sac_sync_req: ");
+	//hexdump(data, len);
 
 	serial = UINT32(data, 4);
-	eTrace("[CI RCC] serial %u\n", serial);
+	//eDebug("[CI RCC] %u\n", serial);
 
 	pos += BYTE32(&dest[pos], serial);
 	pos += BYTE32(&dest[pos], 0x01000000);
@@ -328,8 +329,8 @@ int eDVBCICcSession::data_get_loop(const uint8_t *data, unsigned int datalen, un
 		if (pos + dt_len > datalen)
 			return 0;
 
-		eTraceNoNewLineStart("[CI RCC] set element %d: ", dt_id);
-		traceHexdump(&data[pos], dt_len);
+		//eDebugNoNewLineStart("[CI RCC] set element %d: ", dt_id);
+		//hexdump(&data[pos], dt_len);
 
 		m_ci_elements.set(dt_id, &data[pos], dt_len);
 
@@ -364,11 +365,8 @@ int eDVBCICcSession::data_req_loop(uint8_t *dest, unsigned int dest_len, const u
 		}
 
 		len = m_ci_elements.get_req(dest, dt_id);
-		if (len > 0)
-		{
-			eTraceNoNewLineStart("[CI RCC] req element %d: ", dt_id);
-			traceHexdump(&dest[3], len - 3);
-		}
+		//eDebugNoNewLineStart("[CI RCC] req element %d: ", dt_id);
+		//hexdump(&dest[3], len - 3);
 
 		pos += len;
 		dest += len;

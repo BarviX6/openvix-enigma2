@@ -9,12 +9,14 @@
 
 // misc helper functions
 
-void traceHexdump(const uint8_t *data, unsigned int len)
+/*
+void hexdump(const uint8_t *data, unsigned int len)
 {
 	while (len--)
-		eTraceNoNewLine("%02x ", *data++);
-	eTraceNoNewLine("\n");
+		eDebugNoNewLine("%02x ", *data++);
+	eDebug(" ");
 }
+*/
 
 int get_random(uint8_t *dest, int len)
 {
